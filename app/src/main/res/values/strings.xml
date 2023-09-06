@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">InvoicePDFExample</string>
+    <string name="create_pdf_invoice">Create PDF Invoice</string>
 </resources>
