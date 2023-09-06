@@ -15,12 +15,39 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import org.harundemir.invoicepdfexample.databinding.ActivityMainBinding
+import org.harundemir.invoicepdfexample.models.InvoiceItem
 import java.io.File
 import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var permissionCode = 101
+    private val items = mutableListOf(
+        InvoiceItem(
+            title = "Apple",
+            price = 12.0,
+            quantity = 1,
+            total = 12.0
+        ),
+        InvoiceItem(
+            title = "Banana",
+            price = 24.0,
+            quantity = 2,
+            total = 48.0
+        ),
+        InvoiceItem(
+            title = "Strawberry",
+            price = 10.0,
+            quantity = 1,
+            total = 10.0
+        ),
+        InvoiceItem(
+            title = "Kiwi",
+            price = 8.0,
+            quantity = 3,
+            total = 24.0
+        )
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -39,6 +66,8 @@ class MainActivity : AppCompatActivity() {
         val pdfDocument = PdfDocument()
         val pageWidth = 595
         val pageHeight = 842
+        val rectBottom = 340f
+        val verticalSpacing = 30f
         val pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create()
         val page = pdfDocument.startPage(pageInfo)
         val canvas = page.canvas
@@ -61,6 +90,8 @@ class MainActivity : AppCompatActivity() {
             textSize = 12f
         }
 
+        val paint = Paint()
+
         val companyNamePaint = Paint(boldAlignedLeft)
         val invoicePaint = Paint()
 
@@ -76,6 +107,11 @@ class MainActivity : AppCompatActivity() {
         val customerAddressLine1Paint = Paint(defaultAlignedLeft)
         val customerAddressLine2Paint = Paint(defaultAlignedLeft)
         val customerPhonePaint = Paint(defaultAlignedLeft)
+
+        val tablePaint = Paint().apply {
+            style = Paint.Style.STROKE
+            strokeWidth = 2f
+        }
 
         invoicePaint.apply {
             textAlign = Paint.Align.RIGHT
@@ -137,6 +173,29 @@ class MainActivity : AppCompatActivity() {
             drawText(
                  "555-124-4548", 40f, 290f, customerPhonePaint
             )
+
+            drawRect(40f, 310f, (pageWidth - 40).toFloat(), rectBottom, tablePaint)
+
+            paint.apply {
+                textAlign = Paint.Align.LEFT
+                typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                style = Paint.Style.FILL
+            }
+            drawText(getString(R.string.qty).uppercase(), 50f, 329f, paint)
+            drawText(getString(R.string.item).uppercase(), 110f, 329f, paint)
+            drawText(getString(R.string.price).uppercase(), 390f, 329f, paint)
+            drawText(getString(R.string.total).uppercase(), (pageWidth - 115).toFloat(), 329f, paint)
+
+            drawLine(100f, 310f, 100f, 340f, paint)
+            drawLine(380f, 310f, 380f, 340f, paint)
+            drawLine(470f, 310f, 470f, 340f, paint)
+
+            for (i in 0 until items.size) {
+                drawText(items[i].quantity.toString(), 50f, rectBottom + 30f + i * verticalSpacing, paint)
+                drawText(items[i].title, 110f, rectBottom + 30f + i * verticalSpacing, paint)
+                drawText(items[i].price.toString(), 390f, rectBottom + 30f + i * verticalSpacing, paint)
+                drawText(items[i].total.toString(), (pageWidth - 115).toFloat(), rectBottom + 30f + i * verticalSpacing, paint)
+            }
         }
 
         pdfDocument.finishPage(page)

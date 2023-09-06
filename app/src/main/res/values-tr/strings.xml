@@ -12,4 +12,8 @@
     <string name="invoice_no_with_value">Fatura No: %s</string>
     <string name="invoice_date_with_value">Tarih: %s</string>
     <string name="billed_to">Alıcı:</string>
+    <string name="qty">Adet</string>
+    <string name="item">Ürün</string>
+    <string name="price">Fiyat</string>
+    <string name="total">Toplam</string>
 </resources>

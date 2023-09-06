@@ -11,4 +11,8 @@
     <string name="invoice_no_with_value">Invoice No: %s</string>
     <string name="invoice_date_with_value">Date: %s</string>
     <string name="billed_to">Billed To:</string>
+    <string name="qty">Qty</string>
+    <string name="item">Item</string>
+    <string name="price">Price</string>
+    <string name="total">Total</string>
 </resources>
