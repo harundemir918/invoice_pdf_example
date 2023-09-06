@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">InvoicePDFExample</string>
+    <string name="create_pdf_invoice">PDF Fatura Oluştur</string>
+    <string name="invoice">Fatura</string>
+    <string name="pdf_file_created">PDF dosyası oluşturuldu.</string>
+    <string name="failed_to_create_pdf_file">PDF dosyası oluşturma işlemi başarısız.</string>
+    <string name="permission_granted">İzin verildi.</string>
+    <string name="permission_denied">İzin reddedildi.</string>
+</resources>

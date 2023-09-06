@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">InvoicePDFExample</string>
+    <string name="invoice">Invoice</string>
     <string name="create_pdf_invoice">Create PDF Invoice</string>
+    <string name="pdf_file_created">PDF file created.</string>
+    <string name="failed_to_create_pdf_file">Failed to create PDF file.</string>
+    <string name="permission_granted">Permission granted.</string>
+    <string name="permission_denied">Permission denied.</string>
 </resources>

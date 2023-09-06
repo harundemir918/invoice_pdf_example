@@ -3,6 +3,7 @@ package org.harundemir.invoicepdfexample
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
@@ -43,15 +44,29 @@ class MainActivity : AppCompatActivity() {
         val canvas = page.canvas
 
         val companyNamePaint = Paint()
+        val invoicePaint = Paint()
 
         companyNamePaint.apply {
             textAlign = Paint.Align.LEFT
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
             textSize = 12f
         }
+        invoicePaint.apply {
+            textAlign = Paint.Align.RIGHT
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            textSize = 20f
+            color = Color.parseColor("#595959")
+        }
+
         canvas.drawText(
             getString(R.string.app_name),
-            30f, 60f, companyNamePaint
+            40f, 60f, companyNamePaint
+        )
+        canvas.drawText(
+            getString(R.string.invoice).uppercase(),
+            (pageWidth - 40).toFloat(),
+            60f + (companyNamePaint.textSize / 4),
+            invoicePaint
         )
 
         pdfDocument.finishPage(page)
@@ -67,10 +82,10 @@ class MainActivity : AppCompatActivity() {
         )
         try {
             pdfDocument.writeTo(FileOutputStream(file))
-            Toast.makeText(this, "PDF file created.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.pdf_file_created), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Failed to create PDF file.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.failed_to_create_pdf_file), Toast.LENGTH_SHORT).show()
         }
         pdfDocument.close()
     }
@@ -107,10 +122,10 @@ class MainActivity : AppCompatActivity() {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1]
                     == PackageManager.PERMISSION_GRANTED
                 ) {
-                    Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
 
                 } else {
-                    Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }
