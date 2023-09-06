@@ -6,4 +6,9 @@
     <string name="failed_to_create_pdf_file">Failed to create PDF file.</string>
     <string name="permission_granted">Permission granted.</string>
     <string name="permission_denied">Permission denied.</string>
+    <string name="phone_with_value">Phone: %s</string>
+    <string name="fax_with_value">Fax: %s</string>
+    <string name="invoice_no_with_value">Invoice No: %s</string>
+    <string name="invoice_date_with_value">Date: %s</string>
+    <string name="billed_to">Billed To:</string>
 </resources>

@@ -7,4 +7,9 @@
     <string name="failed_to_create_pdf_file">PDF dosyası oluşturma işlemi başarısız.</string>
     <string name="permission_granted">İzin verildi.</string>
     <string name="permission_denied">İzin reddedildi.</string>
+    <string name="phone_with_value">Telefon: %s</string>
+    <string name="fax_with_value">Faks: %s</string>
+    <string name="invoice_no_with_value">Fatura No: %s</string>
+    <string name="invoice_date_with_value">Tarih: %s</string>
+    <string name="billed_to">Alıcı:</string>
 </resources>
