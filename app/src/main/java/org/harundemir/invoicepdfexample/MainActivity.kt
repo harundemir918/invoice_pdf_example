@@ -20,6 +20,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -160,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                 invoiceNoPaint
             )
             drawText(
-                getString(R.string.invoice_date_with_value, "01-01-2023"),
+                getString(R.string.invoice_date_with_value, getLocalizedDate()),
                 (pageWidth - 40).toFloat(),
                 180f,
                 invoiceDatePaint
@@ -326,6 +329,14 @@ class MainActivity : AppCompatActivity() {
         val bigDecimalValue = BigDecimal(value)
         val roundedValue = bigDecimalValue.setScale(2, RoundingMode.HALF_UP)
         return roundedValue.toDouble()
+    }
+
+    fun getLocalizedDate(): String {
+        val calendar = Calendar.getInstance()
+        val locale = Locale.getDefault() // Get the user's device locale
+        val dateFormat = SimpleDateFormat("dd MMMM yyyy", locale) // Define your desired date format
+
+        return dateFormat.format(calendar.time)
     }
 
     private fun checkStoragePermission(): Boolean {
