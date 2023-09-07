@@ -22,7 +22,6 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -296,11 +295,7 @@ class MainActivity : AppCompatActivity() {
 
         pdfDocument.finishPage(page)
 
-        val directory = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-        } else {
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-        }
+        val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
         val file = File(
             directory,
             "invoice.pdf"
@@ -340,15 +335,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkStoragePermission(): Boolean {
-        val writeStoragePermission = ContextCompat.checkSelfPermission(
-            applicationContext,
-            WRITE_EXTERNAL_STORAGE
-        )
-        val readStoragePermission = ContextCompat.checkSelfPermission(
-            applicationContext,
-            READ_EXTERNAL_STORAGE
-        )
-        return writeStoragePermission == PackageManager.PERMISSION_GRANTED && readStoragePermission == PackageManager.PERMISSION_GRANTED
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            true
+        } else {
+            val writeStoragePermission = ContextCompat.checkSelfPermission(
+                applicationContext,
+                WRITE_EXTERNAL_STORAGE
+            )
+            val readStoragePermission = ContextCompat.checkSelfPermission(
+                applicationContext,
+                READ_EXTERNAL_STORAGE
+            )
+            writeStoragePermission == PackageManager.PERMISSION_GRANTED && readStoragePermission == PackageManager.PERMISSION_GRANTED
+        }
     }
 
     private fun requestStoragePermission() {
