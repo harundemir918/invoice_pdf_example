@@ -18,6 +18,9 @@ import org.harundemir.invoicepdfexample.databinding.ActivityMainBinding
 import org.harundemir.invoicepdfexample.models.InvoiceItem
 import java.io.File
 import java.io.FileOutputStream
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -48,6 +51,10 @@ class MainActivity : AppCompatActivity() {
             total = 24.0
         )
     )
+    private var subtotal = 0.0
+    private var tax = 0.0
+    private val taxRate = 0.18
+    private var total = 0.0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -63,11 +70,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createPDF() {
+        val locale = Locale.getDefault()
         val pdfDocument = PdfDocument()
         val pageWidth = 595
         val pageHeight = 842
         val rectBottom = 340f
         val verticalSpacing = 30f
+        var lastVerticalPosition = 0f
         val pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create()
         val page = pdfDocument.startPage(pageInfo)
         val canvas = page.canvas
@@ -158,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             )
 
             drawText(
-                getString(R.string.billed_to).uppercase(),
+                getString(R.string.billed_to).uppercase(locale),
                 40f, 210f, customerInfoTitlePaint
             )
             drawText(
@@ -171,7 +180,7 @@ class MainActivity : AppCompatActivity() {
                 "Anytown, USA 12347", 40f, 270f, customerAddressLine2Paint
             )
             drawText(
-                 "555-124-4548", 40f, 290f, customerPhonePaint
+                "555-124-4548", 40f, 290f, customerPhonePaint
             )
 
             drawRect(40f, 310f, (pageWidth - 40).toFloat(), rectBottom, tablePaint)
@@ -181,21 +190,105 @@ class MainActivity : AppCompatActivity() {
                 typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
                 style = Paint.Style.FILL
             }
-            drawText(getString(R.string.qty).uppercase(), 50f, 329f, paint)
-            drawText(getString(R.string.item).uppercase(), 110f, 329f, paint)
-            drawText(getString(R.string.price).uppercase(), 390f, 329f, paint)
-            drawText(getString(R.string.total).uppercase(), (pageWidth - 115).toFloat(), 329f, paint)
+            drawText(getString(R.string.qty).uppercase(locale), 50f, 329f, paint)
+            drawText(getString(R.string.item).uppercase(locale), 110f, 329f, paint)
+            drawText(getString(R.string.price).uppercase(locale), 390f, 329f, paint)
+            drawText(
+                getString(R.string.amount).uppercase(locale),
+                (pageWidth - 115).toFloat(),
+                329f,
+                paint
+            )
 
             drawLine(100f, 310f, 100f, 340f, paint)
             drawLine(380f, 310f, 380f, 340f, paint)
             drawLine(470f, 310f, 470f, 340f, paint)
 
+            paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+
             for (i in 0 until items.size) {
-                drawText(items[i].quantity.toString(), 50f, rectBottom + 30f + i * verticalSpacing, paint)
-                drawText(items[i].title, 110f, rectBottom + 30f + i * verticalSpacing, paint)
-                drawText(items[i].price.toString(), 390f, rectBottom + 30f + i * verticalSpacing, paint)
-                drawText(items[i].total.toString(), (pageWidth - 115).toFloat(), rectBottom + 30f + i * verticalSpacing, paint)
+                lastVerticalPosition = rectBottom + 30f + i * verticalSpacing
+                drawText(
+                    items[i].quantity.toString(),
+                    50f,
+                    lastVerticalPosition,
+                    paint
+                )
+                drawText(
+                    items[i].title,
+                    110f,
+                    lastVerticalPosition,
+                    paint
+                )
+                drawText(
+                    getString(R.string.value_with_currency, items[i].price.toString()),
+                    390f,
+                    lastVerticalPosition,
+                    paint
+                )
+                drawText(
+                    getString(R.string.value_with_currency, items[i].total.toString()),
+                    (pageWidth - 115).toFloat(),
+                    lastVerticalPosition,
+                    paint
+                )
             }
+
+            calculateTotal()
+
+            drawLine(
+                40f,
+                lastVerticalPosition + 20f,
+                (pageWidth - 40).toFloat(),
+                lastVerticalPosition + 20f,
+                paint
+            )
+
+            drawText(
+                getString(R.string.subtotal).uppercase(locale),
+                390f,
+                lastVerticalPosition + 50f,
+                paint
+            )
+            drawText(
+                getString(R.string.tax).uppercase(locale),
+                390f,
+                lastVerticalPosition + 80f,
+                paint
+            )
+            drawText(
+                getString(R.string.total).uppercase(locale),
+                390f,
+                lastVerticalPosition + 110f,
+                paint
+            )
+
+            drawText(
+                getString(R.string.value_with_currency, subtotal.toString()),
+                (pageWidth - 115).toFloat(),
+                lastVerticalPosition + 50f,
+                paint
+            )
+            drawText(
+                getString(R.string.value_with_currency, tax.toString()),
+                (pageWidth - 115).toFloat(),
+                lastVerticalPosition + 80f,
+                paint
+            )
+            drawText(
+                getString(R.string.value_with_currency, total.toString()),
+                (pageWidth - 115).toFloat(),
+                lastVerticalPosition + 110f,
+                paint
+            )
+
+            paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+            drawText(
+                getString(R.string.tax_rate_description, (taxRate * 100).toString()),
+                40f,
+                lastVerticalPosition + 150f,
+                paint
+            )
         }
 
         pdfDocument.finishPage(page)
@@ -218,6 +311,21 @@ class MainActivity : AppCompatActivity() {
                 .show()
         }
         pdfDocument.close()
+    }
+
+    private fun calculateTotal(): Double {
+        for (i in items) {
+            subtotal += i.total
+        }
+        tax = roundToTwoDecimalPlaces(subtotal * taxRate)
+        total = subtotal + tax
+        return total
+    }
+
+    private fun roundToTwoDecimalPlaces(value: Double): Double {
+        val bigDecimalValue = BigDecimal(value)
+        val roundedValue = bigDecimalValue.setScale(2, RoundingMode.HALF_UP)
+        return roundedValue.toDouble()
     }
 
     private fun checkStoragePermission(): Boolean {

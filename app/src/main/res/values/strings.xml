@@ -14,5 +14,10 @@
     <string name="qty">Qty</string>
     <string name="item">Item</string>
     <string name="price">Price</string>
+    <string name="amount">Amount</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="tax">Tax</string>
     <string name="total">Total</string>
+    <string name="value_with_currency" translatable="false">₺%s</string>
+    <string name="tax_rate_description">Tax rate is calculated as %s%%.</string>
 </resources>

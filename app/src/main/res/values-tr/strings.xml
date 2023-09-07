@@ -14,6 +14,10 @@
     <string name="billed_to">Alıcı:</string>
     <string name="qty">Adet</string>
     <string name="item">Ürün</string>
+    <string name="subtotal">Ara Toplam</string>
     <string name="price">Fiyat</string>
+    <string name="amount">Tutar</string>
     <string name="total">Toplam</string>
+    <string name="tax">Vergi</string>
+    <string name="tax_rate_description">Vergi oranı %%%s olarak hesaplanmıştır.</string>
 </resources>
